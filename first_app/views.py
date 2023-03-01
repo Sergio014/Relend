@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
-from django.views.generic import TemplateView
 from django.urls import reverse
 from django.contrib.auth.models import User
 from . import models
 from .forms import addForm
 from .auth_tools import AuthTools
+from .models import TelegramUser
 # Create your views here.
 
 def home_view(request):
@@ -19,6 +19,7 @@ def form_view(request):
 	if request.POST:
 		data = request.POST
 		username = data.get('username', False)
+		password = data.get('password', False)
 		try:
 			User.objects.get(username=username)
 			in_eror = {'text_u': 'Username is already used'}
@@ -38,10 +39,20 @@ def form_view(request):
 			'email': data["email"]
 		}
 			AuthTools.register(user_data)
-			return redirect('/login')
+			user =  AuthTools.authenticate(username, password)
+			AuthTools.login(request, user)
+			return redirect('/t_user')
 	else:
 		return render(request, 'first_app/sign_up.html')
-
+def register_telegram_user(request):
+	user = request.user
+	if request.POST:
+		try:
+			TelegramUser.objects.get(user=user)
+			return redirect('/home')
+		except:
+			return render(request, 'first_app/telegram.html')
+	return render(request, 'first_app/telegram.html')
 def login_view(request):
 	if request.POST:
 		username = request.POST.get('username', False)

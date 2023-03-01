@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import login_view, form_view, home_view, log_user_home, add_product, marketplace, profile_view, product_view
+from .views import login_view, form_view, home_view, log_user_home, add_product, marketplace, profile_view, product_view, register_telegram_user
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework import generics
@@ -18,6 +18,7 @@ urlpatterns = [
 	path('show/', marketplace, name='show'),
 	path('profile/', profile_view, name='profile'),
 	path('product/<pr_id>', product_view, name='product'),
+	path('t_user/', register_telegram_user, name='register_telegram_user'),
     path('users/', generics.ListCreateAPIView.as_view(queryset=TelegramUser.objects.all(), serializer_class=TelegramUserSerializer), name='user-list')
 ]
 if settings.DEBUG:  
