@@ -5,14 +5,16 @@ from django.contrib.auth.models import User
 from . import models
 from .forms import addForm
 from .auth_tools import AuthTools
-from .models import TelegramUser
-from config import *
+from django.http import HttpResponse, Http404
+from .models import TelegramUser, Product
+from first_app.conf import *
 # Create your views here.
 
 bot = telebot.TeleBot(TOKEN1)
 
 def send_buyer(product, owner, buyer):
-	bot.send_message(owner.telegram_id, parse_mode='HTML', text=f'Your product {product.name} want to buy this user: <a href="tg://user?id={buyer.telegram_id}">{buyer.user.username}</a>')
+	bot.send_message(owner.telegram_id, parse_mode='HTML', text=f'Your product {product.name} want to buyed this user: <a href="tg://user?id={buyer.telegram_id}">{buyer.user.username}</a>')
+
 
 def home_view(request):
 	return render(request, 'first_app/home_page.html')
@@ -122,3 +124,11 @@ def product_view(request, pr_id):
 		send_buyer(product, owner, buyer)
 		return redirect('/show')
 	return render(request, 'first_app/product.html', context=dict)
+
+def del_prod(request, name):
+	try:
+		Product.objects.get(name=name).delete()
+	except:
+		return Http404
+	
+	return HttpResponse('200')

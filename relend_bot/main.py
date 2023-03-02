@@ -1,7 +1,6 @@
 import telebot
 import requests
-from config import *
-
+from conf import *
 
 bot = telebot.TeleBot(TOKEN2)
 
@@ -22,7 +21,12 @@ def save_password(message):
     user['password'] = password
     user['telegram_id'] = message.chat.id
     bot.reply_to(message, 'Thanks! Your login information has been saved. Please send "/start" message this bot: http://t.me/n0tlflcatl0ns_bot')
+    bot.reply_to(message, " If you succesfuly selled your product send me it name")
     requests.post('http://127.0.0.1:8000/users/', user)
-
+    
+@bot.message_handler(func=lambda m: True)
+def delete_product(message):
+    requests.get(f'http://127.0.0.1:8000/del_prod/{message.text}')
+    bot.reply_to(message, 'Succesfuly deleted')
 # start the bot
 bot.polling()
