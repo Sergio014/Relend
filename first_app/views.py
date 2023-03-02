@@ -6,9 +6,10 @@ from . import models
 from .forms import addForm
 from .auth_tools import AuthTools
 from .models import TelegramUser
+from config import *
 # Create your views here.
 
-bot = telebot.TeleBot('5884071710:AAEWfzYmFJasd1wOmOZU3_YDzGcKf5YsoTA')
+bot = telebot.TeleBot(TOKEN1)
 
 def send_buyer(product, owner, buyer):
 	bot.send_message(owner.telegram_id, parse_mode='HTML', text=f'Your product {product.name} want to buy this user: <a href="tg://user?id={buyer.telegram_id}">{buyer.user.username}</a>')
