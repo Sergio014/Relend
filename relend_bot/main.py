@@ -2,7 +2,7 @@ import telebot
 import requests
 bot = telebot.TeleBot('6295344637:AAE92oTYx_MMyfR-8alyLgNa_goxi0ulTSw')
 
-# define a dictionary to store the username and password for each user
+
 user = {}
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -19,7 +19,7 @@ def save_password(message):
     password = message.text
     user['password'] = password
     user['telegram_id'] = message.chat.id
-    bot.reply_to(message, "Thanks! Your login information has been saved.")
+    bot.reply_to(message, 'Thanks! Your login information has been saved. Please send "/start" message this bot: http://t.me/n0tlflcatl0ns_bot')
     requests.post('http://127.0.0.1:8000/users/', user)
 
 # start the bot

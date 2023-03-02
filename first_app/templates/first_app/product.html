@@ -25,8 +25,11 @@
        <h1 class="display-4 font-weight-normal">Want to buy this product?</h1>
        <p class="lead font-weight-normal">Click here:
        <br></p>
-       <a class="btn btn-primary" href="#" role="button">Buy ✅</a>      
-             </div>
+       <form method="post">
+            {% csrf_token %}
+            <input type="submit" class="btn btn-primary" value="Buy product">
+       </form>
+    </div>
       <div class="product-device box-shadow d-none d-md-block"></div>
     </div> 
 </body>

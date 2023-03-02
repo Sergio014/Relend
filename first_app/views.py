@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+import telebot
 from django.urls import reverse
 from django.contrib.auth.models import User
 from . import models
@@ -6,6 +7,11 @@ from .forms import addForm
 from .auth_tools import AuthTools
 from .models import TelegramUser
 # Create your views here.
+
+bot = telebot.TeleBot('5884071710:AAEWfzYmFJasd1wOmOZU3_YDzGcKf5YsoTA')
+
+def send_buyer(product, owner, buyer):
+	bot.send_message(owner.telegram_id, parse_mode='HTML', text=f'Your product {product.name} want to buy this user: <a href="tg://user?id={buyer.telegram_id}">{buyer.user.username}</a>')
 
 def home_view(request):
 	return render(request, 'first_app/home_page.html')
@@ -108,5 +114,10 @@ def profile_view(request):
 	
 def product_view(request, pr_id):
 	product = models.Product.objects.get(pk=pr_id)
+	owner = TelegramUser.objects.get(user=product.user)
+	buyer = TelegramUser.objects.get(user=request.user)
 	dict = {'product': product}
+	if request.POST:
+		send_buyer(product, owner, buyer)
+		return redirect('/show')
 	return render(request, 'first_app/product.html', context=dict)
