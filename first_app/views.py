@@ -3,9 +3,8 @@ import telebot
 from django.urls import reverse
 from django.contrib.auth.models import User
 from . import models
-from .forms import addForm
 from .auth_tools import AuthTools
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse
 from .models import TelegramUser, Product
 from first_app.conf import *
 # Create your views here.
@@ -13,7 +12,8 @@ from first_app.conf import *
 bot = telebot.TeleBot(TOKEN1)
 
 def send_buyer(product, owner, buyer):
-	bot.send_message(owner.telegram_id, parse_mode='HTML', text=f'Your product {product.name} want to buyed this user: <a href="tg://user?id={buyer.telegram_id}">{buyer.user.username}</a>')
+	bot.send_message(owner.telegram_id, parse_mode='HTML', text=f'Your product {product.name} want to buyed this user: <a href="tg://user?id={buyer.telegram_id}">{buyer.user.username}</a> If you sold your account send its name to this <a href="http://t.me/relend_bot">bot</a>')
+	bot.send_message(buyer.telegram_id, parse_mode='HTML', text=f'Did you buyed {product.name} in this user: <a href="tg://user?id={owner.telegram_id}">{owner.user.username}</a> If you buyed the account send /buyed to this <a href="http://t.me/relend_bot">bot</a>')
 
 
 def home_view(request):
@@ -77,25 +77,17 @@ def login_view(request):
 		return render(request, 'first_app/log_in_page.html')
 
 def add_product(request):
-    context = {}
-    if request.POST:
-        form = addForm(request.POST, request.FILES)
-        if form.is_valid() == False or True:
-            name = form.cleaned_data.get("name")
-            category = form.cleaned_data.get("category") 
-            info = form.cleaned_data.get("info")
-            price = form.cleaned_data.get("price") 
-            img = form.cleaned_data.get("image")
-            obj = models.Product.objects.create(image=img, name=name, category=category, info=info, price=price, user=request.user)
-            obj.save()
-            return redirect('/home')
-    form = addForm()
-    user = request.user
-    context = {
-	    		'form': form,
-				'user': user
-		   	}
-    return render(request, "first_app/add_product.html", context)
+	if request.POST:
+		print(request.POST)
+		print(request.FILES)
+		name = request.POST["name"]
+		game = request.POST["game"] 
+		description = request.POST["description"]
+		price = request.POST["price"] 
+		image = request.FILES["photo"]
+		Product.objects.create(image=image, name=name, game=game, description=description, price=price, user=request.user)
+		return redirect('/home')
+	return render(request, "first_app/add_product.html")
     
 def marketplace(request):
 	user = request.user
@@ -108,11 +100,10 @@ def marketplace(request):
 
 def profile_view(request):
 	user = request.user
-	products = models.Product.objects.filter(user=user).all()
-	dict_profile = {
-					'user': user,
-					'products': products
-				}
+	if request.POST:
+		AuthTools.logout(request)
+		return redirect('/')
+	dict_profile = {'user': user}
 	return render(request, 'first_app/profile.html', context=dict_profile)
 	
 def product_view(request, pr_id):
@@ -125,10 +116,21 @@ def product_view(request, pr_id):
 		return redirect('/show')
 	return render(request, 'first_app/product.html', context=dict)
 
-def del_prod(request, name):
+def del_prod(request, tel_id, name):
 	try:
-		Product.objects.get(name=name).delete()
+		account = Product.objects.get(name=name)
 	except:
-		return Http404
-	
+		return HttpResponse('400')
+	# telegram_user = TelegramUser.objects.get(telegram_id=tel_id)
+	telegram_user = TelegramUser.objects.filter(telegram_id=tel_id)[1]
+	if not account.user == telegram_user.user:
+		return HttpResponse('400')
+	elif not account.state == 'sold':
+		return HttpResponse('401')
+	account.delete()
 	return HttpResponse('200')
+
+def sold_acount(request, name):
+	acount = Product.objects.get(name=name)
+	acount.state = 'sold'
+	acount.save()

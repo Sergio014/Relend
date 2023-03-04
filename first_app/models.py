@@ -10,7 +10,8 @@ class TelegramUser(models.Model):
 class Product(models.Model):
 	image = models.FileField(upload_to='images/', null=True, verbose_name="")
 	name = models.CharField(max_length=30)
-	category = models.CharField(max_length=30)
-	info = models.CharField(max_length=255)
+	game = models.CharField(max_length=30)
+	description = models.CharField(max_length=255)
 	price = models.CharField(max_length=10)
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	state = models.CharField(max_length=5, null=True, blank=True)

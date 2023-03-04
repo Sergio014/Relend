@@ -1,6 +1,63 @@
-<h1>Please verify yourself in our telegram bot:</h1>
-<a href='http://t.me/relend_bot'>Telegram bot</a>
-<form method="post">
-    {% csrf_token %}
-    <input type="submit" value="Submit">
-</form>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Verify in Telegram Bot</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #F8F8F8;
+		}
+
+		h1 {
+			font-size: 36px;
+			font-weight: bold;
+			text-align: center;
+			margin-top: 50px;
+		}
+
+		a {
+			display: block;
+			width: 200px;
+			height: 50px;
+			line-height: 50px;
+			background-color: #0088cc;
+			color: #fff;
+			text-align: center;
+			text-decoration: none;
+			border-radius: 5px;
+			margin: 0 auto;
+			margin-top: 50px;
+		}
+
+		form {
+			margin-top: 50px;
+			text-align: center;
+		}
+
+		input[type="submit"] {
+			width: 200px;
+			height: 50px;
+			line-height: 50px;
+			background-color: #0088cc;
+			color: #fff;
+			text-align: center;
+			text-decoration: none;
+			border-radius: 5px;
+			border: none;
+			cursor: pointer;
+		}
+
+		input[type="submit"]:hover {
+			background-color: #005580;
+		}
+	</style>
+</head>
+<body>
+	<h1>Please verify yourself in our Telegram bot:</h1>
+	<a href="http://t.me/relend_bot">Telegram bot</a>
+	<form method="post">
+		{% csrf_token %}
+		<input type="submit" value="Submit">
+	</form>
+</body>
+</html>
