@@ -136,6 +136,7 @@ def del_prod(request, tel_id, name):
 		return HttpResponse('400')
 	elif not account.state == 'sold':
 		return HttpResponse('401')
+	account.image.delete()
 	account.delete()
 	telegram_user.status += 1
 	return HttpResponse('200')
