@@ -207,6 +207,19 @@
             <div class="account-game">{{ product.game }}</div>
             <div class="account-price">{{ product.price }} грн</div>
             <div class="account-description">{{ product.description }}</div>
+            <div class="account-description">Owner status: 
+				{% if owner.status == 0 %}
+					<p style="color: gray">Not defined</p>
+				{% elif owner.status < -1 %}
+					<p style="color: red">Very bad</p>
+				{% elif owner.status < 0 %}
+					<p style="color: red">Bad</p>
+				{% elif owner.status > 2 %}
+					<p style="color: green">Very good</p>
+				{% elif owner.status > 0 %}
+					<p style="color: greenyellow">Good</p>
+				{% endif %}
+			</div>
         </div>
         <form method="post">
             {% csrf_token %}

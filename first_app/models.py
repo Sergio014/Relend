@@ -5,6 +5,7 @@ class TelegramUser(models.Model):
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
 	username = models.CharField(max_length=255, null=True, blank=True)
 	password = models.CharField(max_length=255, null=True, blank=True)
+	status = models.IntegerField(default=0)
 	telegram_id = models.PositiveBigIntegerField()
 
 class Product(models.Model):
