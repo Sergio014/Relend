@@ -85,8 +85,6 @@ def login_view(request):
 
 def add_product(request):
 	if request.POST:
-		print(request.POST)
-		print(request.FILES)
 		name = request.POST["name"]
 		game = request.POST["game"] 
 		description = request.POST["description"]
@@ -120,8 +118,14 @@ def product_view(request, pr_id):
 	dict = {
 		'product': product,
 		'owner': owner,
+		'is_admin': buyer.user.is_staff,
 	}
-	if request.POST:
+	if 'del' in request.POST:
+		product.delete()
+		owner.status += -2
+		owner.save()
+		return redirect('/show')
+	elif request.POST:
 		send_buyer(product, owner, buyer)
 		return render(request, 'first_app/buy.html')
 	return render(request, 'first_app/product.html', context=dict)

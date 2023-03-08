@@ -224,6 +224,9 @@
         <form method="post">
             {% csrf_token %}
             <input type="submit" class="buy-button" value="Buy Product">
+			{% if is_admin %}
+			<input type="submit" class="buy-button" name="del" value="Delete">
+            {% endif %}
         </form>
 	</div>
 </body>

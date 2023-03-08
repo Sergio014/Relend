@@ -8,6 +8,11 @@ class TelegramUser(models.Model):
 	status = models.IntegerField(default=0)
 	telegram_id = models.PositiveBigIntegerField()
 
+	def is_banned(self):
+		if self.status < -3:
+			return True
+		return False
+
 class Product(models.Model):
 	image = models.FileField(upload_to='images/', null=True, verbose_name="")
 	name = models.CharField(max_length=30)

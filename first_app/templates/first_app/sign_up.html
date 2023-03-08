@@ -116,13 +116,25 @@ input[type="submit"]:hover {
         <label for="confirm-password">Confirm Password:</label>
         <input type="password" id="confirm-password" name="confirm-password" required>
       </div>
+      <div class="input-box">
+        <input type="checkbox" id="confirm" name="confirm" required>
+        <label for="confirm-password">I agree with <a href="https://www.freeprivacypolicy.com/live/12de9dea-7c34-4fec-b93b-d6981b40f137">Private Policy</a>, <a href="https://www.termsandconditionsgenerator.com/live.php?token=fTJCwaIcssRpWVhw5ztV2Tltch7D8Mwc">Terms and Conditions</a></label>
+      </div>
       <div class="submit-box">
         <p>Already registered?
         <a href="{% url 'first_app:log_in_page' %}">Log in</a></p>
-        <input type="submit" value="Register">
+        <input type="submit" id="submit-button" value="Register">
       </div>
     </form>
   </div>
+  <script>
+  const confirmCheckbox = document.getElementById('confirm');
+  const submitButton = document.getElementById('submit-button');
+  
+  confirmCheckbox.addEventListener('change', () => {
+    submitButton.disabled = !confirmCheckbox.checked;
+  });
+</script>
   <script>
     const form = document.querySelector('form');
     const password = document.getElementById('password');
