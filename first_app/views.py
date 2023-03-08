@@ -12,8 +12,8 @@ from first_app.conf import *
 
 bot = telebot.TeleBot(TOKEN1)
 
-def send_buyer(product, owner, buyer):
-	bot.send_message(owner.telegram_id, parse_mode='HTML', text=f"Ваш продукт {product.name} хоче придбати цей користувач: <a href='tg://user?id={buyer.telegram_id}'>{buyer.user.username}</a> Якщо ви продали свій обліковий запис, надішліть його ім'я цьому <a href='http://t.me/relend_bot'>боту</a>, або якщо вас ошукали, надішліть /report також цьому <a href='http://t.me/relend_bot'>боту</a>")
+def send_buyer(product, owner, buyer, status):
+	bot.send_message(owner.telegram_id, parse_mode='HTML', text=f"Ваш продукт {product.name} хоче придбати цей користувач: <a href='tg://user?id={buyer.telegram_id}'>{buyer.user.username}</a> Рейтинг користувача: {status} Якщо ви продали свій обліковий запис, надішліть його ім'я цьому <a href='http://t.me/relend_bot'>боту</a>, або якщо вас ошукали, надішліть /report також цьому <a href='http://t.me/relend_bot'>боту</a>")
 	bot.send_message(buyer.telegram_id, parse_mode='HTML', text=f'Ви купили {product.name} у цього користувача: <a href="tg://user?id={owner.telegram_id}">{owner.user.username}</a>? Якщо ви купили обліковий запис, надішліть /buyed цьому <a href="http://t.me/relend_bot">боту</a>, або якщо вас ошукали, надішліть /report також цьому <a href="http://t.me/relend_bot">боту</a>.')
 
 
@@ -126,7 +126,15 @@ def product_view(request, pr_id):
 		owner.save()
 		return redirect('/show')
 	elif request.POST:
-		send_buyer(product, owner, buyer)
+		if buyer.status < 2:
+			status = 'Дуже поганий'
+		elif buyer.status < 0:
+			status = 'Поганий'
+		elif buyer.status > 0:
+			status = 'Хороший'
+		elif buyer.status > 2:
+			status = 'Дуже хороший'	
+		send_buyer(product, owner, buyer, status)
 		return render(request, 'first_app/buy.html')
 	return render(request, 'first_app/product.html', context=dict)
 
@@ -145,10 +153,12 @@ def del_prod(request, tel_id, name):
 	telegram_user.status += 1
 	return HttpResponse('200')
 
-def sold_acount(request, name):
+def sold_acount(request, tel_id, name):
 	acount = Product.objects.get(name=name)
 	acount.state = 'sold'
 	acount.save()
+	telegram_user = TelegramUser.objects.filter(telegram_id=tel_id)[0]
+	telegram_user.status += 1
 	return HttpResponse('200')
 
 def skam_user(request, username):

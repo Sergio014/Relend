@@ -30,7 +30,7 @@ def ask_name(message):
     bot.register_next_step_handler(message, check_account)
 
 def check_account(message):
-    requests.get(f'http://127.0.0.1:8000/sel_prod/{message.text}')
+    requests.get(f'http://127.0.0.1:8000/sel_prod/{message.chat.id}/{message.text}')
     bot.reply_to(message, "Дякую! Обліковий запис додано до категорії проданих")
 
 @bot.message_handler(commands=['report'])
