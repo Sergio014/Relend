@@ -1,16 +1,21 @@
 from django.shortcuts import render, redirect
-import telebot
 from django.urls import reverse
 from django.contrib.auth.models import User
-from . import models
-from .auth_tools import AuthTools
 from django.http import HttpResponse
 from django.contrib.auth import logout
-from .models import TelegramUser, Product
-from first_app.conf import *
-# Create your views here.
 
-bot = telebot.TeleBot(TOKEN1)
+from .auth_tools import AuthTools
+from .models import TelegramUser, Product
+
+import telebot
+import os
+
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
+bot = telebot.TeleBot(os.getenv('TOKEN1'))
 
 def send_buyer(product, owner, buyer, status):
 	bot.send_message(owner.telegram_id, parse_mode='HTML', text=f"Ваш продукт {product.name} хоче придбати цей користувач: <a href='tg://user?id={buyer.telegram_id}'>{buyer.user.username}</a> Рейтинг користувача: {status} Якщо ви продали свій обліковий запис, надішліть його ім'я цьому <a href='http://t.me/relend_bot'>боту</a>, або якщо вас ошукали, надішліть /report також цьому <a href='http://t.me/relend_bot'>боту</a>")
@@ -96,7 +101,7 @@ def add_product(request):
     
 def marketplace(request):
 	user = request.user
-	prods = models.Product.objects.all()
+	prods = Product.objects.all()
 	dict = {
 				'products': prods,
 				'user': user
@@ -112,7 +117,7 @@ def profile_view(request):
 	return render(request, 'first_app/profile.html', context=dict_profile)
 	
 def product_view(request, pr_id):
-	product = models.Product.objects.get(pk=pr_id)
+	product = Product.objects.get(pk=pr_id)
 	owner = TelegramUser.objects.get(user=product.user)
 	buyer = TelegramUser.objects.get(user=request.user)
 	dict = {

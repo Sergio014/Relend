@@ -1,8 +1,13 @@
 import telebot
 import requests
-from conf import *
+import os
 
-bot = telebot.TeleBot(TOKEN2)
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
+bot = telebot.TeleBot(os.getenv('TOKEN2'))
 
 user = {}
 @bot.message_handler(commands=['start'])
