@@ -22,7 +22,7 @@ urlpatterns = [
 	path('del_prod/<tel_id>/<name>', del_prod),
 	path('report/<username>', skam_user),
 	path('sel_prod/<tel_id>/<name>', sold_acount),
-    path('users/', generics.ListCreateAPIView.as_view(queryset=TelegramUser.objects.all(), serializer_class=TelegramUserSerializer), name='user-list')
+    path('users/', generics.ListCreateAPIView.as_view(queryset=TelegramUser.objects.all(), serializer_class=TelegramUserSerializer), name='user-list'),
 ]
-if settings.DEBUG:  
+if settings.DEBUG:
         urlpatterns += static(settings.MEDIA_URL, document_root= settings.MEDIA_ROOT)
