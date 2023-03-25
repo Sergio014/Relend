@@ -1,14 +1,51 @@
-{% load static %}
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
-    <title>Sign up</title>
+<html>
+  <head>
+    <title>Contact Us</title>
     <style>
       body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f5f5f5;
+      }
+      #container {
+    width: 80%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
+  }
+  
+  h1, h2 {
+    color: #333;
+    text-align: center;
+  }
+  
+  ul {
+    text-align: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  li {
+    margin-bottom: 10px;
+  }
+  
+  a {
+    color: #0077cc;
+    text-decoration: none;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  p {
+    text-align: center;
+  }
+  body {
 			margin: 0;
 			padding: 0;
 			font-family: Arial, sans-serif;
@@ -96,7 +133,7 @@
 				display: flex;
 			}
 		}
-    </style>
+</style>
 </head>
 <body>
   <nav>
@@ -121,27 +158,18 @@
       nav.classList.toggle('active');
     });
   </script>
- 
-  <body class="bg-light">
-<div class="my_div">
- <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center back">
-     <div class="container">
-       <h1 class="display-4 font-weight-normal">Relend</h1>
-       <p class="lead font-weight-normal">Relend is a place where you can sell accounts in Free FIre, Standoff 2 and Pubg
-       <br></p>
-       <a class="btn btn-primary" href="{% url 'first_app:register_page' %}" role="button">Sign up</a>      
-             </div>
-      <div class="account-device box-shadow d-none d-md-block"></div>
-    </div> 
-<div style="margin-top: 5%;">
-  <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center back">
-      <div class="container">
-      <h1 class="display-4 font-weight-normal">Why you should use exactly our site?</h1>
-        <p class="lead font-weight-normal">Relend is very fast marketplace, just sign up and you'll can buy accounts in the markeplace or add your own. Then if somebody will want to buy your account, our telegram bot send you message and after this you can discuss buying/selling an account.</p>
-        
-      </div>
-      <div class="account-device box-shadow d-none d-md-block"></div>
-    </div>
-    <p class="mt-5 mb-3 text-muted">&copy; 2022-2023</p>
+ <br>
+ <br>
+ <br>
+ <br>
+  <div id="container">
+    <h2>Email</h2>
+    <p>Send us an email at <a href="#">testmail@gmail.com</a></p>
+    <h2>Social Media</h2>
+    <ul>
+      <li>Follow us on <a href="https://www.instagram.com/">Instagram</a></li>
+      <li>Connect with us on <a href="https://t.me/">Telegram</a></li>
+    </ul>
+  </div>
 </body>
 </html>

@@ -93,7 +93,7 @@ input[type="submit"]:hover {
         <input type="text" id="name" name="lname" required>
       </div>
       <div class="input-box">
-        {% if not text_u %}
+        {% if not incorrect_username %}
         <label for="name">Username:</label>
         {% else %}
         <label for="name">Username(username is already used):</label>

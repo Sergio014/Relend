@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import login_view, skam_user, sold_acount, form_view, home_view, log_user_home, del_prod, add_product, marketplace, profile_view, product_view, register_telegram_user
+from . import views
+from . import api
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework import generics
@@ -10,18 +11,19 @@ from .serializers import TelegramUserSerializer
 app_name = 'first_app'
 
 urlpatterns = [
-	path('', home_view, name='home_page'),
-	path('home/', log_user_home, name='log_home'),
-	path('register/', form_view, name='sign_up_page'),
-	path('login/', login_view, name='log_in_page'),
-	path('add_product/', add_product, name='add_product_page'),
-	path('show/', marketplace, name='show'),
-	path('profile/', profile_view, name='profile'),
-	path('product/<pr_id>', product_view, name='product'),
-	path('t_user/', register_telegram_user, name='register_telegram_user'),
-	path('del_prod/<tel_id>/<name>', del_prod),
-	path('report/<username>', skam_user),
-	path('sel_prod/<tel_id>/<name>', sold_acount),
+	path('', views.home_view, name='home_page'),
+	path('contact/', views.contact_us_view, name='contact_us'),
+	path('home/', views.log_user_home, name='loged_user_home'),
+	path('register/', views.register_view, name='register_page'),
+	path('login/', views.login_view, name='log_in_page'),
+	path('add_account/', views.add_account, name='add_account_page'),
+	path('marketplace/', views.marketplace_view, name='marketplace'),
+	path('profile/', views.profile_view, name='profile'),
+	path('account/<account_id>', views.account_view, name='account'),
+	path('register_user_in_telegram/', views.register_telegram_user, name='register_telegram_user'),
+	path('del_account/<tel_id>/<name>', api.del_account),
+	path('report/<username>', api.report_user),
+	path('sel_account/<tel_id>/<name>', api.add_sold_state),
     path('users/', generics.ListCreateAPIView.as_view(queryset=TelegramUser.objects.all(), serializer_class=TelegramUserSerializer), name='user-list'),
 ]
 if settings.DEBUG:

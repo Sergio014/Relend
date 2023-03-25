@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from first_app.models import Product
+from first_app.models import Account
 
-class ProductSerializer(serializers.ModelSerializer):
+class AccountSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source='user.username')
     state = serializers.ReadOnlyField()
     class Meta:
-        model = Product
+        model = Account
         fields = ['id', 'image', 'name', 'game', 'description', 'price', 'user', 'state']

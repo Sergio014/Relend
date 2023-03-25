@@ -183,10 +183,12 @@
     <nav>
         <div class="logo">Relend</div>
         <ul>
-          <li><a href="{% url 'first_app:log_home' %}">Home</a></li>
-          <li><a href="{% url 'first_app:show' %}">Marketplace</a></li>
-          <li><a href="{% url 'first_app:add_product_page' %}">Add product</a></li>
+          <li><a href="{% url 'first_app:loged_user_home' %}">Home</a></li>
+          <li><a href="{% url 'first_app:marketplace' %}">Marketplace</a></li>
+          <li><a href="{% url 'first_app:add_account_page' %}">Add account</a></li>
           <li><a href="{% url 'first_app:profile' %}">Profile</a></li>
+		  <li><a href="{% url 'first_app:contact_us' %}">Contact us</a></li>
+
         </ul>
       </nav>
       
@@ -201,12 +203,12 @@
         });
       </script>
 	<div class="account-container">
-		<img src="{{ product.image.url }}" alt="Account 1" class="account-image">
+		<img src="{{ account.image.url }}" alt="Account 1" class="account-image">
         <div class="account-details">
-            <div class="account-name">{{ product.name }}</div>
-            <div class="account-game">{{ product.game }}</div>
-            <div class="account-price">{{ product.price }} грн</div>
-            <div class="account-description">{{ product.description }}</div>
+            <div class="account-name">{{ account.name }}</div>
+            <div class="account-game">{{ account.game }}</div>
+            <div class="account-price">{{ account.price }} грн</div>
+            <div class="account-description">{{ account.description }}</div>
             <div class="account-description">Owner status: 
 				{% if owner.status == 0 %}
 					<p style="color: gray">Not defined</p>
@@ -223,9 +225,11 @@
         </div>
         <form method="post">
             {% csrf_token %}
-            <input type="submit" class="buy-button" value="Buy Product">
+            <input type="submit" class="buy-button" value="Buy Account">
 			{% if is_admin %}
-			<input type="submit" class="buy-button" name="del" value="Delete">
+			<input type="submit" class="buy-button" name="del_as_admin" value="Delete">
+			{% elif is_owner %}
+			<input type="submit" class="buy-button" name="del_as_owner" value="Delete">
             {% endif %}
         </form>
 	</div>

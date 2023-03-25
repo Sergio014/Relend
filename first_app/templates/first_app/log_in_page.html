@@ -84,7 +84,7 @@ input[type="submit"]:hover {
     <form action="#" method="POST">
       {% csrf_token %}
       <div class="input-box">
-        {% if not text_u %}
+        {% if not incorrect_username_or_password %}
         <label for="name">Username:</label>
         {% else %}
         <label for="name">Username(Incorrect username):</label>

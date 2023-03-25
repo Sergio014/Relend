@@ -3,24 +3,11 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.contrib.auth import logout
-
+from . import actions
 from .auth_tools import AuthTools
-from .models import TelegramUser, Product
+from .models import TelegramUser, Account
 
-import telebot
-import os
-
-from dotenv import load_dotenv
-
-
-load_dotenv()
-
-bot = telebot.TeleBot(os.getenv('TOKEN1'))
-
-def send_buyer(product, owner, buyer, status):
-	bot.send_message(owner.telegram_id, parse_mode='HTML', text=f"Ваш продукт {product.name} хоче придбати цей користувач: <a href='tg://user?id={buyer.telegram_id}'>{buyer.user.username}</a> Рейтинг користувача: {status} Якщо ви продали свій обліковий запис, надішліть його ім'я цьому <a href='http://t.me/relend_bot'>боту</a>, або якщо вас ошукали, надішліть /report також цьому <a href='http://t.me/relend_bot'>боту</a>")
-	bot.send_message(buyer.telegram_id, parse_mode='HTML', text=f'Ви купили {product.name} у цього користувача: <a href="tg://user?id={owner.telegram_id}">{owner.user.username}</a>? Якщо ви купили обліковий запис, надішліть /buyed цьому <a href="http://t.me/relend_bot">боту</a>, або якщо вас ошукали, надішліть /report також цьому <a href="http://t.me/relend_bot">боту</a>.')
-
+from .telegram_bot import send_buyer
 
 def home_view(request):
 	if request.user.is_authenticated:
@@ -32,145 +19,105 @@ def log_user_home(request):
 	dict_for_page = {'user': user}
 	return render(request, 'first_app/loged_user_page.html', context=dict_for_page)
 		
-def form_view(request):
+def register_view(request):
 	if request.user.is_authenticated:
 		return redirect('/home')
 	if request.POST:
 		data = request.POST
 		username = data.get('username', False)
 		password = data.get('password', False)
-		try:
-			User.objects.get(username=username)
-			in_eror = {'text_u': 'Username is already used'}
-			return render(request, 'first_app/sign_up.html', context=in_eror)
-		except:
-			email = data.get('email', False)
-		try:
-			User.objects.get(email=email)
+		username_status = AuthTools.validate_username(username)
+		if username_status != 'valid':
+			return render(request, 'first_app/register.html', context={f'incorrect_username': 'Username is {username_status}'})
+		email = data.get('email', False)
+		if AuthTools.get_user_by_email(email) is not None:
 			new_eror = {'text': 'This email is already used'}
-			return render(request, 'first_app/sign_up.html', context=new_eror)
-		except:
-			user_data = {
+			return render(request, 'first_app/register.html', context=new_eror)
+		user_data = {
 			'username': data["username"],
 			'first_name': data["fname"],
 			'last_name':data["lname"],
 			'password': data["password"],
 			'email': data["email"]
 		}
-			AuthTools.register(user_data)
-			user =  AuthTools.authenticate(username, password)
-			AuthTools.login(request, user)
-			return redirect('/t_user')
-	else:
-		return render(request, 'first_app/sign_up.html')
+		AuthTools.register(user_data)
+		user = AuthTools.authenticate(username, password)
+		AuthTools.login(request, user)
+		return redirect('/register_user_in_telegram')
+	return render(request, 'first_app/register.html')
+
 def register_telegram_user(request):
 	user = request.user
 	if request.POST:
 		try:
 			TelegramUser.objects.get(user=user)
-			return redirect('/home')
 		except:
 			return render(request, 'first_app/telegram.html')
+		return redirect('/home')
 	return render(request, 'first_app/telegram.html')
+
 def login_view(request):
 	if request.user.is_authenticated:
 		return redirect('/home')
 	if request.POST:
 		username = request.POST.get('username', False)
 		password = request.POST.get('password', False)
-		user =  AuthTools.authenticate(username, password)
+		user = AuthTools.authenticate(username, password)
 		if user is None:
-			in_error = {'text_u': 'Incorect username or password!'}
-			return render(request, 'first_app/log_in_page.html', context=in_error)
-		else:
-			AuthTools.login(request, user)
-			return redirect('/home')
-	else:
-		return render(request, 'first_app/log_in_page.html')
-
-def add_product(request):
-	if request.POST:
-		name = request.POST["name"]
-		game = request.POST["game"] 
-		description = request.POST["description"]
-		price = request.POST["price"] 
-		image = request.FILES["photo"]
-		Product.objects.create(image=image, name=name, game=game, description=description, price=price, user=request.user)
+			incorrect_data_error = {'incorrect_username_or_password': 'Incorect username or password!'}
+			return render(request, 'first_app/log_in_page.html', context=incorrect_data_error)
+		AuthTools.login(request, user)
 		return redirect('/home')
-	return render(request, "first_app/add_product.html")
+	return render(request, 'first_app/log_in_page.html')
+
+def add_account(request):
+	if request.POST:
+		actions.add_product(request)
+		return redirect('/home')
+	return render(request, "first_app/add_account.html")
     
-def marketplace(request):
+def marketplace_view(request):
 	user = request.user
-	prods = Product.objects.all()
+	accounts = Account.objects.all()
 	dict = {
-				'products': prods,
+				'accounts': accounts,
 				'user': user
 			}
 	return render(request, 'first_app/market.html', context=dict)
 
 def profile_view(request):
 	user = request.user
-	if request.POST:
+	if 'del_profile' in request.POST:
+		user.delete()
+		return redirect('/')
+	elif request.POST:
 		logout(request)
 		return redirect('/')
 	dict_profile = {'user': user}
 	return render(request, 'first_app/profile.html', context=dict_profile)
 	
-def product_view(request, pr_id):
-	product = Product.objects.get(pk=pr_id)
-	owner = TelegramUser.objects.get(user=product.user)
+def account_view(request, account_id):
+	account = Account.objects.get(pk=account_id)
+	owner = TelegramUser.objects.get(user=account.user)
 	buyer = TelegramUser.objects.get(user=request.user)
 	dict = {
-		'product': product,
+		'account': account,
 		'owner': owner,
+		'is_owner': owner == buyer,
 		'is_admin': buyer.user.is_staff,
 	}
-	if 'del' in request.POST:
-		product.delete()
-		owner.status += -2
-		owner.save()
-		return redirect('/show')
+	if 'del_as_admin' in request.POST:
+		actions.del_account_as_admin(account, owner)
+		return redirect('/marketplace')
+	
+	elif 'del_as_owner' in request.POST:
+		account.delete()
+		return redirect('/marketplace')
+	
 	elif request.POST:
-		if buyer.status < 2:
-			status = 'Дуже поганий'
-		elif buyer.status < 0:
-			status = 'Поганий'
-		elif buyer.status > 0:
-			status = 'Хороший'
-		elif buyer.status > 2:
-			status = 'Дуже хороший'	
-		send_buyer(product, owner, buyer, status)
+		send_buyer(account, owner, buyer, status=actions.get_buyer_status(buyer))
 		return render(request, 'first_app/buy.html')
-	return render(request, 'first_app/product.html', context=dict)
+	return render(request, 'first_app/account.html', context=dict)
 
-def del_prod(request, tel_id, name):
-	try:
-		account = Product.objects.get(name=name)
-	except:
-		return HttpResponse('400')
-	telegram_user = TelegramUser.objects.filter(telegram_id=tel_id)[0]
-	if not account.user == telegram_user.user:
-		return HttpResponse('400')
-	elif not account.state == 'sold':
-		return HttpResponse('401')
-	account.image.delete()
-	account.delete()
-	telegram_user.status += 1
-	return HttpResponse('200')
-
-def sold_acount(request, tel_id, name):
-	acount = Product.objects.get(name=name)
-	acount.state = 'sold'
-	acount.save()
-	telegram_user = TelegramUser.objects.filter(telegram_id=tel_id)[0]
-	telegram_user.status += 1
-	return HttpResponse('200')
-
-def skam_user(request, username):
-	try:
-		user = TelegramUser.objects.get(user=User.objects.get(username=username))
-	except:
-		return HttpResponse('404')
-	user.status += -1
-	user.save()
-	return HttpResponse('200')
+def contact_us_view(request):
+	return render(request, 'first_app/contact_us.html')

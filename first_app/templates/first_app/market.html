@@ -213,10 +213,12 @@
 	<nav>
 		<div class="logo">Relend</div>
 		<ul>
-		  <li><a href="{% url 'first_app:log_home' %}">Home</a></li>
-		  <li><a href="{% url 'first_app:show' %}">Marketplace</a></li>
-		  <li><a href="{% url 'first_app:add_product_page' %}">Add product</a></li>
+		  <li><a href="{% url 'first_app:loged_user_home' %}">Home</a></li>
+		  <li><a href="{% url 'first_app:marketplace' %}">Marketplace</a></li>
+		  <li><a href="{% url 'first_app:add_account_page' %}">Add account</a></li>
 		  <li><a href="{% url 'first_app:profile' %}">Profile</a></li>
+		  <li><a href="{% url 'first_app:contact_us' %}">Contact us</a></li>
+
 		</ul>
 	  </nav>
 	  
@@ -241,12 +243,12 @@
 			<button class="filter-btn" data-game="Brawl Stars">Brawl Stars</button>
 </div>
 	<div class="accounts">
-		{% for product in products %}
-    	<a class="account-card" href="{% url 'first_app:product' pr_id=product.id %}" data-game="{{ product.game }}">
-			<img src="{{ product.image.url }}" alt="{{ product.game }} account">
-			<h2>{{ product.name }}</h2>
-			<p>{{ product.description }}</p>
-			<span>{{ product.price }} грн</span>
+		{% for account in accounts %}
+    	<a class="account-card" href="{% url 'first_app:account' account_id=account.id %}" data-game="{{ account.game }}">
+			<img src="{{ account.image.url }}" alt="{{ account.game }} account">
+			<h2>{{ account.name }}</h2>
+			<p>{{ account.description }}</p>
+			<span>{{ account.price }} грн</span>
 		</a>
 		{% endfor %}
 	</div>

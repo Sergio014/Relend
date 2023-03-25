@@ -46,13 +46,11 @@ class AuthTools:
 		return user
 	@staticmethod
 	def get_user_by_email(email):
-		if email is not None:
-			try:
-				user = User.objects.filter(email=email)[0]
-				return user
-			except:
-				pass
-		return None
+		try:
+			user = User.objects.filter(email=email)[0]
+		except:
+			return None
+		return user
 
 	@staticmethod
 	def authenticate_email(email, password):
@@ -137,7 +135,7 @@ class AuthTools:
 		else:
 			user = AuthTools.get_user_by_username(username)
 			if user is not None:
-				status = 'taken'
+				status = 'already taken'
 		return status
 	@staticmethod
 	def validate_email(email):

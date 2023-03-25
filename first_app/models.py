@@ -13,7 +13,7 @@ class TelegramUser(models.Model):
 			return True
 		return False
 
-class Product(models.Model):
+class Account(models.Model):
 	image = models.FileField(upload_to='images/', null=True, verbose_name="")
 	name = models.CharField(max_length=30)
 	game = models.CharField(max_length=30)

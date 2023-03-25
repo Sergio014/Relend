@@ -101,10 +101,11 @@
 <nav>
   <div class="logo">Relend</div>
   <ul>
-    <li><a href="{% url 'first_app:log_home' %}">Home</a></li>
-    <li><a href="{% url 'first_app:show' %}">Marketplace</a></li>
-    <li><a href="{% url 'first_app:add_product_page' %}">Add product</a></li>
+    <li><a href="{% url 'first_app:loged_user_home' %}">Home</a></li>
+    <li><a href="{% url 'first_app:marketplace' %}">Marketplace</a></li>
+    <li><a href="{% url 'first_app:add_account_page' %}">Add account</a></li>
     <li><a href="{% url 'first_app:profile' %}">Profile</a></li>
+	<li><a href="{% url 'first_app:contact_us' %}">Contact us</a></li>
   </ul>
 </nav>
 
@@ -125,9 +126,9 @@
        <h1 class="display-4 font-weight-normal">We'll notify an owner of an account that you want to buy he's account!!</h1>
        <p class="lead font-weight-normal">Now, you can go back to our marketplace
        <br></p>
-       <a class="btn btn-primary" href="{% url 'first_app:show' %}" role="button">Marketplace</a>      
+       <a class="btn btn-primary" href="{% url 'first_app:marketplace' %}" role="button">Marketplace</a>      
              </div>
-      <div class="product-device box-shadow d-none d-md-block"></div>
+      <div class="account-device box-shadow d-none d-md-block"></div>
     </div> 
     <p class="mt-5 mb-3 text-muted">&copy; 2022-2023</p>
 </body>
