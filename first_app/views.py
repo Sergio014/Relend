@@ -7,7 +7,7 @@ from . import actions
 from .auth_tools import AuthTools
 from .models import TelegramUser, Account
 
-from .telegram_bot import send_buyer
+from telegram_bot.management.commands.bot import send_buyer
 
 def home_view(request):
 	if request.user.is_authenticated:
@@ -15,9 +15,7 @@ def home_view(request):
 	return render(request, 'first_app/home_page.html')
 
 def log_user_home(request):
-	user = request.user
-	dict_for_page = {'user': user}
-	return render(request, 'first_app/loged_user_page.html', context=dict_for_page)
+	return render(request, 'first_app/loged_user_page.html', context={'user': request.user})
 		
 def register_view(request):
 	if request.user.is_authenticated:

@@ -21,9 +21,6 @@ urlpatterns = [
 	path('profile/', views.profile_view, name='profile'),
 	path('account/<account_id>', views.account_view, name='account'),
 	path('register_user_in_telegram/', views.register_telegram_user, name='register_telegram_user'),
-	path('del_account/<tel_id>/<name>', api.del_account),
-	path('report/<username>', api.report_user),
-	path('sel_account/<tel_id>/<name>', api.add_sold_state),
     path('users/', generics.ListCreateAPIView.as_view(queryset=TelegramUser.objects.all(), serializer_class=TelegramUserSerializer), name='user-list'),
 ]
 if settings.DEBUG:
