@@ -3,11 +3,12 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.contrib.auth import logout
+
 from . import actions
 from .auth_tools import AuthTools
 from .models import TelegramUser, Account
+from telegram_bot.management.commands import bot
 
-from telegram_bot.management.commands.bot import send_buyer
 
 def home_view(request):
 	if request.user.is_authenticated:
@@ -113,7 +114,7 @@ def account_view(request, account_id):
 		return redirect('/marketplace')
 	
 	elif request.POST:
-		send_buyer(account, owner, buyer, status=actions.get_buyer_status(buyer))
+		bot.send_notification_to_owner(account, owner, buyer, status=actions.get_buyer_status(buyer))
 		return render(request, 'first_app/buy.html')
 	return render(request, 'first_app/account.html', context=dict)
 

@@ -1,69 +1,86 @@
 from django.core.management.base import BaseCommand
+from first_app import api
 
 import dotenv
+import json
 import telebot
-import requests
 import os
 
-from first_app import api
 
 dotenv.load_dotenv()
 
 bot = telebot.TeleBot(os.getenv('TOKEN1'))
 user = {}
 
-def send_buyer(account, owner, buyer, status):
-	bot.send_message(owner.telegram_id, parse_mode='HTML', 
-                text=f"""Ваш продукт {account.name} хоче придбати цей користувач: 
-                <a href='tg://user?id={buyer.telegram_id}'>{buyer.user.username}</a> 
-                Рейтинг користувача: {status} Якщо ви продали свій обліковий запис, просто
-                надішліть його ім'я, або якщо вас ошукали, надішліть мені /report.""")
-	bot.send_message(buyer.telegram_id, parse_mode='HTML', 
+def delete_message_after_button(call):
+    bot.delete_message(call.message.chat.id, call.message.message_id)
+
+def send_notification_to_owner(account, owner, buyer, status):
+    keyboard = telebot.types.InlineKeyboardMarkup()
+    sold = telebot.types.InlineKeyboardButton(
+        text="ПРОДАНО", 
+        callback_data=json.dumps({
+            'buyer': buyer.id,
+            'owner': owner.id,
+            'account_id': account.id,
+        })
+    )
+    report = telebot.types.InlineKeyboardButton(text=f"СКАРГА", 
+                                                callback_data=json.dumps({'report_user': buyer.user.username}))
+    keyboard.add(sold, report)
+    
+    bot.send_message(owner.telegram_id, parse_mode='HTML', reply_markup=keyboard,
+                text=f"""Ваш продукт {account.name} хоче придбати цей користувач:
+            <a href='tg://user?id={buyer.telegram_id}'>{buyer.user.username}</a> 
+            Рейтинг користувача: {status}""")
+    
+def send_notification_to_buyer(account, owner, buyer):
+    keyboard = telebot.types.InlineKeyboardMarkup()
+    sold = telebot.types.InlineKeyboardButton(text="Так", 
+                                              callback_data=json.dumps({
+                                                'confirmed': True,
+                                                'account_id': account.id,
+                                                }))
+    report = telebot.types.InlineKeyboardButton(text=f"СКАРГА", callback_data=json.dumps({'report_user': owner.user.username}))
+    keyboard.add(sold, report)
+
+    bot.send_message(buyer.telegram_id, parse_mode='HTML', reply_markup=keyboard,
                 text=f'''Ви купили {account.name} у цього користувача: 
-		        <a href="tg://user?id={owner.telegram_id}">{owner.user.username}</a>? 
-                Якщо ви купили обліковий запис, надішліть мені /buyed,
-                або якщо вас ошукали, надішліть мені /report.''')
+		        <a href="tg://user?id={owner.telegram_id}">{owner.user.username}</a>?''')
+
+def succesfully_sold(telegram_id):
+    bot.send_message(telegram_id, 'Вітаю, ваш акаунт успішно продано :)')
+
+@bot.callback_query_handler(func=lambda call: True)
+def callback_query(call):
+    delete_message_after_button(call)
+    data = json.loads(call.data)
+    if 'confirmed' in data:
+        bot.send_message(call.message.chat.id, api.del_account(pk=data['account_id']))
+    elif 'account_id' in data:
+        bot.send_message(call.message.chat.id, 
+                         api.confirm_sale(data['account_id'], data['buyer'], data['owner']))
+    elif 'report_user' in data:
+        bot.send_message(call.message.chat.id, api.report_user(username=data['report_user']))
+
 
 @bot.message_handler(commands=['start'])
-def start(message):
-    bot.reply_to(message, "Привіт! Введіть своє ім'я користувача:")
-    bot.register_next_step_handler(message, ask_password)
+def get_username(message):
+    bot.reply_to(message, "Привіт! Щоб авторизуватися, будь ласка, введіть своє ім'я користувача:")
+    bot.register_next_step_handler(message, get_password)
 
-def ask_password(message):
+def get_password(message):
     username = message.text
     user['username'] = username
     bot.reply_to(message, "Дякую! Тепер, будь ласка, введіть свій пароль:")
-    bot.register_next_step_handler(message, save_password)
+    bot.register_next_step_handler(message, check_data)
 
-def save_password(message):
+def check_data(message):
     password = message.text
     if api.register_telegram_user(user['username'], password, message.chat.id):
-        bot.reply_to(message, 'Дякую! Ваші дані для входу збережено. Щоб ми могли повідомити вас про покупку ваших/інших акаунтів надішліть повідомлення "/start" цьому боту: http://t.me/n0tlflcatl0ns_bot')
-        bot.reply_to(message, " Якщо ви успішно продали свій продукт, надішліть мені його назву, але майте на увазі, щоб користуватись цією функцією покупець акаунту повинен перший підтвердити покупку.")
+        bot.reply_to(message, '''Ви успішно увійшли у свій акаунт''')
     else:
-        bot.reply_to("Неправильне ім'я або пароль")
-
-@bot.message_handler(commands=['buyed'])
-def ask_name(message):
-    bot.reply_to(message, "Введіть назву облікового запису який ви хочете купити:")
-    bot.register_next_step_handler(message, check_account)
-
-def check_account(message):
-    api.add_sold_state(message.chat.id, message.text)
-    bot.reply_to(message, "Дякую! Обліковий запис додано до категорії проданих")
-
-@bot.message_handler(commands=['report'])
-def ask_name(message):
-    bot.reply_to(message, "Будь ласка, введіть ім'я користувача, який вас ошукав")
-    bot.register_next_step_handler(message, check_profile)
-
-def check_profile(message):
-    api.report_user(message.text)
-    bot.reply_to(message, "Дякую за інформацію я відправив скаргу на цього користувача.")
-
-@bot.message_handler(func=lambda m: True)
-def delete_account(message):
-    bot.reply_to(message, )
+        bot.reply_to("Неправильне ім'я або пароль, надішліть /start щоб спробувати знову")
 
 class Command(BaseCommand):
     help = 'Implemented to Django application telegram bot setup command'
