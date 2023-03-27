@@ -225,11 +225,13 @@
         </div>
         <form method="post">
             {% csrf_token %}
-            <input type="submit" class="buy-button" value="Buy Account">
 			{% if is_admin %}
+			<input type="submit" class="buy-button" value="Buy Account">
 			<input type="submit" class="buy-button" name="del_as_admin" value="Delete">
 			{% elif is_owner %}
 			<input type="submit" class="buy-button" name="del_as_owner" value="Delete">
+			{% else %}
+			<input type="submit" class="buy-button" value="Buy Account">
             {% endif %}
         </form>
 	</div>

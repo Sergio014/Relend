@@ -8,7 +8,10 @@ def register_telegram_user(username, password, telegram_id):
 	user = AuthTools.authenticate(username, password)
 	if not user:
 		return False
-	TelegramUser.objects.create(user=user, telegram_id=telegram_id)
+	try:
+		TelegramUser.objects.create(user=user, telegram_id=telegram_id)
+	except:
+		return False
 	return True
 
 def confirm_sale(pk, buyer_id, owner_id):
@@ -41,4 +44,6 @@ def report_user(username):
 		return 'Щось пішло не так :('
 	user.status += -1
 	user.save()
+	if user.is_banned():
+		bot.send_to_buned_user(user.telegram_id)
 	return 'Дякую за скаргу'

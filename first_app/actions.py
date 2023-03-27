@@ -1,4 +1,6 @@
 from .models import Account
+from telegram_bot.management.commands import bot
+from .auth_tools import AuthTools
 
 def get_buyer_status(buyer):
     if buyer.status < 2:
@@ -12,8 +14,10 @@ def get_buyer_status(buyer):
 
 def del_account_as_admin(account, owner):
     account.delete()
-    owner.status -= 2
+    owner.status -= 1
     owner.save()
+    if owner.is_banned():
+        bot.send_to_buned_user(owner.telegram_id)
 
 def add_product(request):
     name = request.POST["name"]

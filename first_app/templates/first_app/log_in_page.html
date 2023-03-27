@@ -92,7 +92,7 @@ input[type="submit"]:hover {
         <input type="text" id="username" name="username" required>
       </div>
       <div class="input-box">
-        {% if text %}
+        {% if not text %}
         <label for="password">Password:</label>
         {% else %}
         <label for="password">Password(Incorrect password):</label>

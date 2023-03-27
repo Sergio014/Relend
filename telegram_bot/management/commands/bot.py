@@ -12,6 +12,9 @@ dotenv.load_dotenv()
 bot = telebot.TeleBot(os.getenv('TOKEN1'))
 user = {}
 
+def send_to_buned_user(telegram_id):
+    bot.send_message(telegram_id, 'Ваш акаунт був заблокований через погану поведінку')
+
 def delete_message_after_button(call):
     bot.delete_message(call.message.chat.id, call.message.message_id)
 

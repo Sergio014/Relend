@@ -17,6 +17,9 @@ def home_view(request):
 
 @login_required
 def log_user_home(request):
+	if TelegramUser.objects.get(user=request.user).is_banned():
+		logout(request)
+		return redirect('/')
 	return render(request, 'first_app/loged_user_page.html', context={'user': request.user})
 		
 def register_view(request):
@@ -72,6 +75,9 @@ def login_view(request):
 
 @login_required
 def add_account(request):
+	if TelegramUser.objects.get(user=request.user).is_banned():
+		logout(request)
+		return redirect('/')
 	if request.POST:
 		actions.add_product(request)
 		return redirect('/home')
@@ -79,6 +85,9 @@ def add_account(request):
 
 @login_required
 def marketplace_view(request):
+	if TelegramUser.objects.get(user=request.user).is_banned():
+		logout(request)
+		return redirect('/')
 	user = request.user
 	accounts = Account.objects.all()
 	dict = {
@@ -89,6 +98,9 @@ def marketplace_view(request):
 
 @login_required
 def profile_view(request):
+	if TelegramUser.objects.get(user=request.user).is_banned():
+		logout(request)
+		return redirect('/')
 	user = request.user
 	if 'del_profile' in request.POST:
 		user.delete()
@@ -101,6 +113,9 @@ def profile_view(request):
 
 @login_required
 def account_view(request, account_id):
+	if TelegramUser.objects.get(user=request.user).is_banned():
+		logout(request)
+		return redirect('/')
 	account = Account.objects.get(pk=account_id)
 	owner = TelegramUser.objects.get(user=account.user)
 	buyer = TelegramUser.objects.get(user=request.user)
@@ -125,4 +140,7 @@ def account_view(request, account_id):
 
 @login_required
 def contact_us_view(request):
+	if TelegramUser.objects.get(user=request.user).is_banned():
+		logout(request)
+		return redirect('/')
 	return render(request, 'first_app/contact_us.html')
