@@ -30,9 +30,7 @@ def send_notification_to_owner(account, owner, buyer, status):
     keyboard.add(sold, report)
     
     bot.send_message(owner.telegram_id, parse_mode='HTML', reply_markup=keyboard,
-                text=f"""Ваш продукт {account.name} хоче придбати цей користувач:
-            <a href='tg://user?id={buyer.telegram_id}'>{buyer.user.username}</a> 
-            Рейтинг користувача: {status}""")
+                text=f"""Ваш продукт {account.name} хоче придбати цей користувач: <a href='tg://user?id={buyer.telegram_id}'>{buyer.user.username}</a> Рейтинг користувача: {status}""")
     
 def send_notification_to_buyer(account, owner, buyer):
     keyboard = telebot.types.InlineKeyboardMarkup()
@@ -45,8 +43,7 @@ def send_notification_to_buyer(account, owner, buyer):
     keyboard.add(sold, report)
 
     bot.send_message(buyer.telegram_id, parse_mode='HTML', reply_markup=keyboard,
-                text=f'''Ви купили {account.name} у цього користувача: 
-		        <a href="tg://user?id={owner.telegram_id}">{owner.user.username}</a>?''')
+                text=f'''Ви купили {account.name} у цього користувача: <a href="tg://user?id={owner.telegram_id}">{owner.user.username}</a>?''')
 
 def succesfully_sold(telegram_id):
     bot.send_message(telegram_id, 'Вітаю, ваш акаунт успішно продано :)')
@@ -78,7 +75,7 @@ def get_password(message):
 def check_data(message):
     password = message.text
     if api.register_telegram_user(user['username'], password, message.chat.id):
-        bot.reply_to(message, '''Ви успішно увійшли у свій акаунт''')
+        bot.reply_to(message, '''Ви успішно увійшли у свій акаунт, можете спокійно повертатись до сайту.''')
     else:
         bot.reply_to("Неправильне ім'я або пароль, надішліть /start щоб спробувати знову")
 

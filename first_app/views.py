@@ -8,13 +8,14 @@ from . import actions
 from .auth_tools import AuthTools
 from .models import TelegramUser, Account
 from telegram_bot.management.commands import bot
-
+from django.contrib.auth.decorators import login_required
 
 def home_view(request):
 	if request.user.is_authenticated:
 		return redirect('/home')
 	return render(request, 'first_app/home_page.html')
 
+@login_required
 def log_user_home(request):
 	return render(request, 'first_app/loged_user_page.html', context={'user': request.user})
 		
@@ -69,12 +70,14 @@ def login_view(request):
 		return redirect('/home')
 	return render(request, 'first_app/log_in_page.html')
 
+@login_required
 def add_account(request):
 	if request.POST:
 		actions.add_product(request)
 		return redirect('/home')
 	return render(request, "first_app/add_account.html")
-    
+
+@login_required
 def marketplace_view(request):
 	user = request.user
 	accounts = Account.objects.all()
@@ -84,6 +87,7 @@ def marketplace_view(request):
 			}
 	return render(request, 'first_app/market.html', context=dict)
 
+@login_required
 def profile_view(request):
 	user = request.user
 	if 'del_profile' in request.POST:
@@ -94,7 +98,8 @@ def profile_view(request):
 		return redirect('/')
 	dict_profile = {'user': user}
 	return render(request, 'first_app/profile.html', context=dict_profile)
-	
+
+@login_required
 def account_view(request, account_id):
 	account = Account.objects.get(pk=account_id)
 	owner = TelegramUser.objects.get(user=account.user)
@@ -118,5 +123,6 @@ def account_view(request, account_id):
 		return render(request, 'first_app/buy.html')
 	return render(request, 'first_app/account.html', context=dict)
 
+@login_required
 def contact_us_view(request):
 	return render(request, 'first_app/contact_us.html')

@@ -32,16 +32,7 @@ def del_account(pk):
 	telegram_user = TelegramUser.objects.get(user=account.user)
 	telegram_user.status += 1
 	bot.succesfully_sold(telegram_user.telegram_id)
-	return 'Успішно продано'
-
-
-def add_sold_state(tel_id, name):
-	acount = Account.objects.get(name=name)
-	acount.state = 'sold'
-	acount.save()
-	telegram_user = TelegramUser.objects.filter(telegram_id=tel_id)[0]
-	telegram_user.status += 1
-	return HttpResponse('200')
+	return 'Успішно куплено'
 
 def report_user(username):
 	try:
