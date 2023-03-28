@@ -28,12 +28,18 @@ def send_notification_to_owner(account, owner, buyer, status):
             'account_id': account.id,
         })
     )
+    back = telebot.types.InlineKeyboardButton(
+        text="НАЗАД", 
+        callback_data=json.dumps({
+            'back': True,
+        })
+    )
     report = telebot.types.InlineKeyboardButton(text=f"СКАРГА", 
                                                 callback_data=json.dumps({'report_user': buyer.user.username}))
-    keyboard.add(sold, report)
+    keyboard.add(sold, report, back)
     
     bot.send_message(owner.telegram_id, parse_mode='HTML', reply_markup=keyboard,
-                text=f"""Ваш продукт {account.name} хоче придбати цей користувач: <a href='tg://user?id={buyer.telegram_id}'>{buyer.user.username}</a> Рейтинг користувача: {status}""")
+                text=f"""Ваш продукт {account.name} хоче придбати цей користувач: <a href='tg://user?id={buyer.telegram_id}'>{buyer.user.username}</a> Рейтинг користувача: {status}. Нагадую, що про покупку з користувачем ви домовляєтесь особисто, я створений тільки для того, щоб оповіщати вас про бажаючих купити ваш акаунт.""")
     
 def send_notification_to_buyer(account, owner, buyer):
     keyboard = telebot.types.InlineKeyboardMarkup()
@@ -42,8 +48,14 @@ def send_notification_to_buyer(account, owner, buyer):
                                                 'confirmed': True,
                                                 'account_id': account.id,
                                                 }))
+    back = telebot.types.InlineKeyboardButton(
+        text="НАЗАД", 
+        callback_data=json.dumps({
+            'back': True,
+        })
+    )
     report = telebot.types.InlineKeyboardButton(text=f"СКАРГА", callback_data=json.dumps({'report_user': owner.user.username}))
-    keyboard.add(sold, report)
+    keyboard.add(sold, report, back)
 
     bot.send_message(buyer.telegram_id, parse_mode='HTML', reply_markup=keyboard,
                 text=f'''Ви купили {account.name} у цього користувача: <a href="tg://user?id={owner.telegram_id}">{owner.user.username}</a>?''')
@@ -62,6 +74,8 @@ def callback_query(call):
                          api.confirm_sale(data['account_id'], data['buyer'], data['owner']))
     elif 'report_user' in data:
         bot.send_message(call.message.chat.id, api.report_user(username=data['report_user']))
+    elif 'back' in data:
+        pass
 
 
 @bot.message_handler(commands=['start'])

@@ -3,10 +3,13 @@ from telegram_bot.management.commands import bot
 from .auth_tools import AuthTools
 
 def get_buyer_status(buyer):
-    if buyer.status < 2:
+    print(buyer.status)
+    if buyer.status < -2:
         return 'Дуже поганий'
     elif buyer.status < 0:
         tatus = 'Поганий'
+    elif buyer.status == 0:
+        return 'Невизначений'
     elif buyer.status > 0:
         return 'Хороший'
     elif buyer.status > 2:
