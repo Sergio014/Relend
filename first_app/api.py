@@ -3,16 +3,18 @@ from django.http import HttpResponse
 from .auth_tools import AuthTools
 from .models import TelegramUser, Account
 from telegram_bot.management.commands import bot
+from django.core.exceptions import ObjectDoesNotExist
 
 def register_telegram_user(username, password, telegram_id):
 	user = AuthTools.authenticate(username, password)
 	if not user:
 		return False
 	try:
+		TelegramUser.objects.get(telegram_id=telegram_id)
+	except ObjectDoesNotExist:
 		TelegramUser.objects.create(user=user, telegram_id=telegram_id)
-	except:
-		return False
-	return True
+		return True
+	return False
 
 def confirm_sale(pk, buyer_id, owner_id):
 	buyer = TelegramUser.objects.get(pk=buyer_id)

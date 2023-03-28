@@ -80,7 +80,7 @@ def check_data(message):
     if api.register_telegram_user(user['username'], password, message.chat.id):
         bot.reply_to(message, '''Ви успішно увійшли у свій акаунт, можете спокійно повертатись до сайту.''')
     else:
-        bot.reply_to("Неправильне ім'я або пароль, надішліть /start щоб спробувати знову")
+        bot.reply_to(message, "Неправильне ім'я або пароль, надішліть /start щоб спробувати знову")
 
 class Command(BaseCommand):
     help = 'Implemented to Django application telegram bot setup command'

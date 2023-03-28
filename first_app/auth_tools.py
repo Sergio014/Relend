@@ -129,13 +129,13 @@ class AuthTools:
 		min_username_length = 3
 		status = "valid"
 		if len(username) <= min_username_length:
-			status = 'invalid'
-		elif re.match("^[a-zA-Z0-9_-]+$", username) is None:
-			status = 'invalid'
+			status = 'too short'
 		else:
-			user = AuthTools.get_user_by_username(username)
-			if user is not None:
-				status = 'already taken'
+			try:
+				user = User.objects.get(username=username)
+			except:
+				return status
+			status = 'already taken'
 		return status
 	@staticmethod
 	def validate_email(email):
@@ -149,24 +149,13 @@ class AuthTools:
 		return status
 	@staticmethod
 	def password_check(passwd):
-		
-		SpecialSym =['$', '@', '#', '%']
-		
-		if len(passwd) <= 8:
-			return 'length should be at least 8'
+		if len(passwd) <= 6:
+			return 'length should be at least 6'
 			
 		elif len(passwd) > 20:
 			return 'length should be not be greater than 20'
 			
 		elif not any(char.isdigit() for char in passwd):
 			return 'Password should have at least one numeral'
-			
-		elif not any(char.isupper() for char in passwd):
-			return 'Password should have at least one uppercase letter'
-			
-		elif not any(char.islower() for char in passwd):
-			return 'Password should have at least one lowercase letter'
-			
-		elif not any(char in SpecialSym for char in passwd):
-			return 'Password should have at least one of the symbols $@#'
-		return None
+		
+		return False

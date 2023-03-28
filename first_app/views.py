@@ -29,9 +29,12 @@ def register_view(request):
 		data = request.POST
 		username = data.get('username', False)
 		password = data.get('password', False)
+		validation_of_password = AuthTools.password_check(password)
+		if validation_of_password:
+			return render(request, 'first_app/register.html', context={'incorrect_password': f'{validation_of_password}'})
 		username_status = AuthTools.validate_username(username)
 		if username_status != 'valid':
-			return render(request, 'first_app/register.html', context={f'incorrect_username': 'Username is {username_status}'})
+			return render(request, 'first_app/register.html', context={'incorrect_username': f'username is {username_status}'})
 		email = data.get('email', False)
 		if AuthTools.get_user_by_email(email) is not None:
 			new_eror = {'text': 'This email is already used'}

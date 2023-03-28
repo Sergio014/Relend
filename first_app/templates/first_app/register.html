@@ -96,7 +96,7 @@ input[type="submit"]:hover {
         {% if not incorrect_username %}
         <label for="name">Username:</label>
         {% else %}
-        <label for="name">Username(username is already used):</label>
+        <label for="name">Username({{ incorrect_username }}):</label>
         {% endif %}
         <input type="text" id="username" name="username" required>
       </div>
@@ -109,7 +109,11 @@ input[type="submit"]:hover {
         <input type="email" id="email" name="email" required>
       </div>
       <div class="input-box">
+        {% if not incorrect_password %}
         <label for="password">Password:</label>
+        {% else %}
+        <label for="password">Password({{ incorrect_password }}):</label>
+        {% endif %}
         <input type="password" id="password" name="password" required>
       </div>
       <div class="input-box">
