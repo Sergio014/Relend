@@ -130,10 +130,10 @@
 		.filters {
 			display: flex;
 			justify-content: space-between;
-			align-items: center;
+			align-items: auto;
 			margin-top: 30px;
 			margin-bottom: 30px;
-			padding: 10px;
+			padding: 40px;
 			background-color: #fff;
 			box-shadow: 0px 3px 10px rgba(0,0,0,0.1);
 			border-radius: 5px;
@@ -237,10 +237,16 @@
 
 		<div class="filters">
 			<input type="text" class="search-box" placeholder="Search...">
+			<form method="post">
+				{% csrf_token %}
+				<input type="text" class="search-box" name="min-price" placeholder="Min price" default="0">
+				<input class="filter-btn" type="submit" value="Filter">
+			</form>
 			<button class="filter-btn" data-game="Free Fire">Free Fire</button>
 			<button class="filter-btn" data-game="Pubg">PUBG</button>
 			<button class="filter-btn" data-game="Standoff 2">Standoff 2</button>
 			<button class="filter-btn" data-game="Brawl Stars">Brawl Stars</button>
+			
 </div>
 	<div class="accounts">
 		{% for account in accounts %}

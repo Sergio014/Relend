@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.contrib.auth import logout
+from django.db.models import Q
 
 from . import actions
 from .auth_tools import AuthTools
@@ -92,7 +93,10 @@ def marketplace_view(request):
 		logout(request)
 		return redirect('/')
 	user = request.user
-	accounts = Account.objects.all()
+	if request.POST:
+		accounts = Account.objects.filter(Q(price__gt = request.POST['min-price']) | Q(price = request.POST['min-price']))
+	else:
+		accounts = Account.objects.all()
 	dict = {
 				'accounts': accounts,
 				'user': user
