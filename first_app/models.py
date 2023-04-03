@@ -5,9 +5,10 @@ class TelegramUser(models.Model):
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
 	status = models.IntegerField(default=0)
 	telegram_id = models.PositiveBigIntegerField()
+	language = models.CharField(max_length=2, default='en')
 
 	def is_banned(self):
-		return self.status < -3
+		return self.status < -2
 
 class Account(models.Model):
 	image = models.FileField(upload_to='images/', null=True, verbose_name="")

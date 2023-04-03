@@ -5,15 +5,15 @@ from .auth_tools import AuthTools
 def get_buyer_status(buyer):
     print(buyer.status)
     if buyer.status < -2:
-        return 'Дуже поганий'
+        return '👎🏼👎🏼'
     elif buyer.status < 0:
-        tatus = 'Поганий'
+        tatus = '👎🏼'
     elif buyer.status == 0:
-        return 'Невизначений'
+        return 'Unknown'
     elif buyer.status > 0:
-        return 'Хороший'
+        return '👍🏼'
     elif buyer.status > 2:
-    	return 'Дуже хороший'
+    	return '👍🏼👍🏼'
 
 def del_account_as_admin(account, owner):
     account.delete()
