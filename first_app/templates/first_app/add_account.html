@@ -187,7 +187,11 @@
       <input type="text" id="price" name="price" required>
       <label for="photo">Photo(Only one):</label>
       <input type="file" id="photo" name="photo" required>
-      <input type="submit" value="Add Account to marketplace">
+      {% if exceeded %}
+        <p>{{ exceeded }}</p>
+      {% else %}
+        <input type="submit" value="Add Account to marketplace">
+      {% endif %}  
     </form>
   </body>
 </html>

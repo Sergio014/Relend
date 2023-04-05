@@ -15,5 +15,6 @@ class Account(models.Model):
 	name = models.CharField(max_length=30)
 	game = models.CharField(max_length=30)
 	description = models.CharField(max_length=255)
-	price = models.CharField(max_length=10)
+	price = models.PositiveIntegerField()
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	created_at = models.DateTimeField(auto_now_add=True, null=True)

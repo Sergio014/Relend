@@ -83,8 +83,9 @@ def add_account(request):
 		logout(request)
 		return redirect('/')
 	if request.POST:
-		actions.add_product(request)
-		return redirect('/home')
+		if actions.add_product(request) is None:
+			return redirect('/home')
+		return render(request, "first_app/add_account.html", context={'exceeded': actions.add_product(request)})
 	return render(request, "first_app/add_account.html")
 
 @login_required
@@ -94,7 +95,7 @@ def marketplace_view(request):
 		return redirect('/')
 	user = request.user
 	if request.POST:
-		accounts = Account.objects.filter(Q(price__gt = request.POST['min-price']) | Q(price = request.POST['min-price']))
+		accounts = Account.objects.filter(price__gt = int(request.POST['min-price']))
 	else:
 		accounts = Account.objects.all()
 	dict = {
