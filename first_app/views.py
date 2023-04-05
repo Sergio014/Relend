@@ -94,8 +94,12 @@ def marketplace_view(request):
 		logout(request)
 		return redirect('/')
 	user = request.user
-	if request.POST:
-		accounts = Account.objects.filter(price__gt = int(request.POST['min-price']))
+	if '$' in request.POST:
+		accounts = Account.objects.filter(price__gt = int(request.POST['min-price']), currency='$')
+	elif '₽' in request.POST:
+		accounts = Account.objects.filter(price__gt = int(request.POST['min-price']), currency='₽')
+	elif '₴' in request.POST:
+		accounts = Account.objects.filter(price__gt = int(request.POST['min-price']), currency='₴')
 	else:
 		accounts = Account.objects.all()
 	dict = {

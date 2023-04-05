@@ -239,8 +239,11 @@
 			<input type="text" class="search-box" placeholder="Search...">
 			<form method="post">
 				{% csrf_token %}
-				<input type="text" class="search-box" name="min-price" placeholder="Min price" default="0">
-				<input class="filter-btn" type="submit" value="Filter">
+				<input type="text" class="search-box" name="min-price" required placeholder="Min price" >
+				<br>
+				<input class="filter-btn" type="submit" name="$" value="$">
+				<input class="filter-btn" type="submit" name="₽" value="₽">
+				<input class="filter-btn" type="submit" name="₴" value="₴">
 			</form>
 			<button class="filter-btn" data-game="Free Fire">Free Fire</button>
 			<button class="filter-btn" data-game="Pubg">PUBG</button>
@@ -254,7 +257,11 @@
 			<img src="{{ account.image.url }}" alt="{{ account.game }} account">
 			<h2>{{ account.name }}</h2>
 			<p>{{ account.description }}</p>
-			<span>{{ account.price }} грн</span>
+			{% if account.currency == '$' %}
+				<span>{{ account.currency }}{{ account.price }}</span>
+			{% else %}
+				<span>{{ account.price }} {{ account.currency }}</span>
+			{% endif %}
 		</a>
 		{% endfor %}
 	</div>

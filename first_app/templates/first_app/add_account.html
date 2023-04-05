@@ -183,8 +183,14 @@
       <input type="text" id="name" name="name" required>
       <label for="desc">Short description:</label>
       <input type="text" id="desc" name="description" required>
-      <label for="price">Price(In hryvnias):</label>
+      <label for="price">Price:</label>
       <input type="text" id="price" name="price" required>
+      <label for="currency">Сurrency:</label>
+      <select name="currency" id="currency">
+        <option>$</option>
+        <option>₴(uah)</option>
+        <option>₽(rub)</option>
+      </select>
       <label for="photo">Photo(Only one):</label>
       <input type="file" id="photo" name="photo" required>
       {% if exceeded %}

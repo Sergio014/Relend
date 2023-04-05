@@ -37,7 +37,8 @@ def add_product(request):
     name = request.POST["name"]
     game = request.POST["game"] 
     description = request.POST["description"]
-    price = request.POST["price"] 
+    price = request.POST["price"]
+    currency  = request.POST["currency"][0]
     image = request.FILES["photo"]
-    Account.objects.create(image=image, name=name, game=game, description=description, price=price, user=request.user)
+    Account.objects.create(image=image, name=name, game=game, description=description, price=price, currency=currency, user=request.user)
     return None

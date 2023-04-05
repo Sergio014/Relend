@@ -207,7 +207,11 @@
         <div class="account-details">
             <div class="account-name">{{ account.name }}</div>
             <div class="account-game">{{ account.game }}</div>
-            <div class="account-price">{{ account.price }} грн</div>
+			{% if account.currency == '$' %}
+				<div class="account-price">{{ account.currency }}{{ account.price }}</div>
+			{% else %}
+				<div class="account-price">{{ account.price }} {{ account.currency }}</div>
+			{% endif %}
             <div class="account-description">{{ account.description }}</div>
             <div class="account-description">Owner status: 
 				{% if owner.status == 0 %}
